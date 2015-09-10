@@ -1,11 +1,4 @@
-require 'nokogiri'
-require 'open-uri'
-require 'colorize'
-require 'pry'
-require_relative 'post'
-require_relative 'comment'
-
-class Main
+class Scraper
   attr_accessor :post
 
   class EmptyFile < StandardError; end
@@ -51,18 +44,12 @@ class Main
   end
 
   #Returns a post object with full comment array
-  def parse_html_post
-    title = @nokogiri_doc.css('.title a').text
-    url = @nokogiri_doc.css('.title a').attr('href').text  #=> post URL
-    id =  @nokogiri_doc.css('.subtext a:nth-child(4)').attr('href').text.gsub(/\D*/, '') #=> ID
-    points = @nokogiri_doc.css('.subtext .score').text #=> points
-  
-    Post.new(title, url, points, id, parse_html_comments)    
+  def parse_html_post  
   end
 
-  def self.run
+  def self.run(url)
     begin
-      Main.new(ARGV[0])
+      self.new(url)
     rescue EmptyFile => e
       puts e.message
       exit
@@ -72,5 +59,3 @@ class Main
     end  
   end
 end
-
-Main.run
