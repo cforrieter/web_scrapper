@@ -18,19 +18,7 @@ class Scraper
     return html_scrape
   end
 
-  #Returns an array of contact objects
-  def parse_html_comments
-    arr = []
-    @nokogiri_doc.css('.default') .each do |element|
-      next if element.css('.comhead a:nth-child(2)').text == ''
-      user = element.css('.comhead a:first-child').text  #=> username
-      date = element.css('.comhead a:nth-child(2)').text   #=> date
-      message = element.css('.comment').text.strip.gsub(/reply$/, '').gsub(/[\n -]*$/, '') #=> message
-      arr << Comment.new(user, date, message)
-    end
-    return arr
-  end
-
+  
   def print_statistics
     puts "Name of post: #{@post.title}".colorize(:blue)
     puts "Post URL: #{@post.url}".colorize(:light_blue)
@@ -43,15 +31,14 @@ class Scraper
     puts "#{@post.most_recent_comments}"
   end
 
-  #Returns a post object with full comment array
-  def parse_html_post  
-  end
-
   def self.run(url)
     begin
       self.new(url)
     rescue EmptyFile => e
       puts e.message
+      exit
+    rescue OpenURI::HTTPError => e
+      puts "404 error, page wasn't found!"
       exit
     rescue BadURL => e
       puts e.message

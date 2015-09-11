@@ -32,16 +32,10 @@ class Post
   end
 
   def longest_comment
-    max_length = 0
-    user = nil
-    @comments.each do |comment| 
-      if comment.message.length > max_length
-        max_length = comment.message.length 
-        user = comment.user
-      end
+    max_comment = @comments.max do |a, b| 
+      a.message.length <=> b.message.length
     end
-    
-    "#{max_length} characters, by #{user}."
+    "#{max_comment.message.length} characters, by #{max_comment.user}."
   end
 
   def first_five_comments
@@ -59,7 +53,7 @@ class Post
     comments
   end
 
-  def most_recent_comments
+  def sort_by_time(arr)
     time_values = {
       'second' => 1,
       'seconds' => 1,
@@ -72,8 +66,8 @@ class Post
       'year' => 5,
       'years' => 5
     }
-   
-    arr = @comments.sort do |a, b|
+
+    arr.sort do |a, b|
       a_number, a_unit = a.date.split(' ')
       b_number, b_unit = b.date.split(' ') 
 
@@ -82,6 +76,11 @@ class Post
       
       [a_unit, a_number.to_i] <=> [b_unit, b_number.to_i]
     end
+  end
+  
+  def most_recent_comments
+
+    arr = sort_by_time(@comments)
 
     number_of_comments = arr.length >= 5 ? 4 : arr.length-1
     comments = ''

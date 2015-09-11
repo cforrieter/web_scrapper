@@ -2,15 +2,12 @@ class HackerNewsScraper < Scraper
 
   #Returns an array of contact objects
   def parse_html_comments
-    arr = []
-    @nokogiri_doc.css('.default') .each do |element|
-      next if element.css('.comhead a:nth-child(2)').text == ''
+    @nokogiri_doc.css('.default').select{ |element| element.css('.comhead a:nth-child(2)').text != '' }.map do |element|
       user = element.css('.comhead a:first-child').text  #=> username
       date = element.css('.comhead a:nth-child(2)').text   #=> date
       message = element.css('.comment').text.strip.gsub(/reply$/, '').gsub(/[\n -]*$/, '') #=> message
-      arr << Comment.new(user, date, message)
+      Comment.new(user, date, message)
     end
-    return arr
   end
 
   #Returns a post object with full comment array

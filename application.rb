@@ -14,7 +14,6 @@ class Application
   def self.run
     url = ARGV[0]
     domain = url.match(/(?:http)?s?(?::\/\/)?(?:www\.)?([^\/]*)\/.*/)[1]
-    puts domain
     case domain
     when 'reddit.com'
       RedditScraper.run(url)

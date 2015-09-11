@@ -1,16 +1,13 @@
 class RedditScraper < Scraper
 
-  #Returns an array of contact objects
+  #Returns an array of comment objects
   def parse_html_comments
-    arr = []
-    @nokogiri_doc.css('div.commentarea .entry').each do |element|
-      next if element.css('time.live-timestamp').text == ''
+    @nokogiri_doc.css('div.commentarea .entry').select{ |element| element.css('time.live-timestamp').text != ''}.map do |element|
       user = element.css('a:nth-child(2)').text  #=> username
       date = element.css('time.live-timestamp').text   #=> date
       message = element.css('div p').text #=> message
-      arr << Comment.new(user, date, message)
+      Comment.new(user, date, message)
     end
-    return arr
   end
 
   #Returns a post object with full comment array
